@@ -1,0 +1,4 @@
+BROAD)SWITCH*
+Line 2012048934:Change flash-hook call service to "Endpoint"
+Line 2012048934:Configure Teen Service Line 1 with random number
+*SWITCH

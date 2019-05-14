@@ -1,0 +1,65 @@
+<<BEGIN_DUT>>
+
+META)SWITCH*
+*SWITCH
+
+E9)OLT*
+cli;show version;
+config;
+interface pots gaspagh3200A/p1;
+sip-service 1;
+dial-plan system-default;
+three-way-calling
+top;
+exit;
+show interface pots gaspagh3200A/p* sip-service status;
+show interface pots gaspagh3200B/p* sip-service status;
+telnet 10.83.19.59 5003;
+ver -nc;
+dcli potsmgr show sip_service;
+dcli potsmgr show sip_profile;
+dcli potsmgr show pots
+*OLT
+
+
+GH3200X)ONT*
+cli;
+telnet 10.83.19.53 5011;
+ver -nc;
+dcli potsmgr show sip_service;
+dcli potsmgr show sip_profile;
+dcli potsmgr show pots
+*ONT
+
+<<END_DUT>>
+
+
+
+<<BEGIN_AUX>>
+)SWITCH*
+*SWITCH
+
+)OLT*
+*OLT
+
+)ONT*
+*ONT
+<<END_AUX>>
+
+	
+<<BEGIN_STEPS>>
+A CALL B;
+HEAR A AND B;
+FLASH A;
+HEAR A AND B;
+A DIAL C;
+OFFHOOK C;
+HEAR A AND C;
+FLASH A;
+HEAR A AND B;
+HEAR A AND C;
+HEAR B AND C;
+HUNGUP C;
+HEAR A AND B;
+END
+<<END_STEPS>>

@@ -1,0 +1,46 @@
+<<BEGIN_DUT>>
+
+META)SWITCH*
+*SWITCH
+
+MILAN)OLT*
+cli;show version;
+config;
+dial-plan DP_test;
+rule 1 pattern ^0[0-9]{3}[0-9]{3}[0-9]{4};
+top;
+interface pots paulo/p1;
+sip-service 1;
+dial-plan DP_test;
+top;
+exit;
+show interface pots paulo/p1 sip-service status
+*OLT
+
+
+GH3200X)ONT*
+*ONT
+
+<<END_DUT>>
+
+
+
+
+<<BEGIN_AUX>>
+
+META)SWITCH*
+*SWITCH
+
+
+E7 117)OLT*
+*OLT
+
+
+844G-1)ONT*
+*ONT
+
+<<END_AUX>>
+
+	
+<<BEGIN_STEPS>>
+<<END_STEPS>>

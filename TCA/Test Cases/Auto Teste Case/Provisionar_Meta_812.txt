@@ -1,0 +1,68 @@
+<<BEGIN_DUT>>
+
+META)SWITCH*
+*SWITCH
+
+MILAN)OLT*
+cli;show version;
+config;
+no ont paulo2;
+ont paulo2 serial-number 5444A6 profile-id 812NG;
+top;
+interface ont-ua paulo2/1;
+sip-profile meta_pet;
+vlan 1020;
+ip address 0.0.0.0/24;
+ip gateway 10.230.20.1;
+policy-map camilavoice;
+top;
+interface pots paulo2/p1;
+sip-service 1;2012048934;2012048934;daitan123;
+dial-plan system-default;
+three-way-calling;
+top;
+exit;
+show interface pots paulo2/* sip-service status
+*OLT
+
+
+GH3200X)ONT*
+*ONT
+
+<<END_DUT>>
+
+
+
+
+<<BEGIN_AUX>>
+
+META)SWITCH*
+*SWITCH
+
+
+E7 117)OLT*
+"E7>Shelf1>Card2>GPON3>ONT6"
+Configure Service Tag with "@Untagged_1020"
+Host Protocol with "dhcp"
+Create SIP service with user name and URI "20120432"
+Password "daitan123"
+SIP profile "@Meta_Pet_IP"
+Dial plan "system-default"
+*OLT
+
+
+844G-1)ONT*
+*ONT
+
+<<END_AUX>>
+
+	
+<<BEGIN_STEPS>>
+A CALL B;
+OFFHOOK B;
+OFFHOOK C;
+FLASH A AND A CALL C;
+FLASH A;
+FLASH A;  
+END
+<<END_STEPS>>

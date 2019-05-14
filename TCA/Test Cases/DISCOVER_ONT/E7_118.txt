@@ -1,0 +1,6 @@
+E7 118)OLT*
+IP*10.10.200.118*IP
+user*e7support*user
+pass*admin*pass
+show ont discovered detail
+*OLT

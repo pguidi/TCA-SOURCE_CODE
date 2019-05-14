@@ -1,0 +1,67 @@
+<<BEGIN_DUT>>
+
+META)SWITCH*
+Enable G729 codec to line A and line B
+*SWITCH
+
+MILAN)OLT*
+cli;show version;
+config;
+sip-profile MetaSwitch;
+no rtp-codec first-order;
+rtp-codec first-order G729;
+no rtp-codec second-order;
+rtp-codec second-order uLaw;
+no rtp-codec third-order;
+rtp-codec third-order aLaw;
+top;
+interface ont-ua gaspagh3200A/1;
+sip-profile MetaSwitch;
+top;
+interface ont-ua gaspagh3200B/1;
+sip-profile MetaSwitch;
+top;
+exit;
+show interface pots gaspagh3200A/p* sip-service status;
+show interface pots gaspagh3200B/p* sip-service status;
+telnet 10.83.19.59 5003;
+ver -nc;
+dcli potsmgr show sip_service;
+dcli potsmgr show sip_profile;
+dcli potsmgr show pots
+*OLT
+
+
+GH3200X)ONT*
+cli;
+telnet 10.83.19.53 5011;
+ver -nc;
+dcli potsmgr show sip_service;
+dcli potsmgr show sip_profile;
+dcli potsmgr show pots
+*ONT
+
+<<END_DUT>>
+
+
+
+<<BEGIN_AUX>>
+
+META)SWITCH*
+*SWITCH
+
+
+E7 117)OLT*
+*OLT
+
+
+844G-1)ONT*
+*ONT
+
+<<END_AUX>>
+
+	
+<<BEGIN_STEPS>>
+A CALL B;
+END
+<<END_STEPS>>

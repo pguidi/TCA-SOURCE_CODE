@@ -1,0 +1,161 @@
+h5. Setup (Preconditions and Configuration):
+*OLT FW:*
+{noformat}
+DAITAN# show version
+version 1/1
+ image-partition      imgy
+ full-release-version N/A
+ live-release-version N/A
+ image-type           FullRelease
+ patches              none
+ features             Signed-Optics-Enforcement-Disabled
+ distro               "IB-AXOS-19.1 2019.02.03 23:51:21"
+ schema               18.0.0-ib191
+ timestamp            "2019.02.03 23:51:21"
+ details              IBAXOS191-CI-708
+version 1/2
+{noformat}
+
+*ONT model, FW versions:*
+{noformat}
+~ # ver -nc
+Calix ONT GH3200X
+  GigEth ports:    3
+  POTS ports:      2       Slic:LE9540
+  RF ports:        0
+  MFG S/N:         341711000034
+  FSAN S/N:        CXNK00478C4D
+  SW Release Ver:  19.1.555.13
+  Kernel Version:  Linux 4.1.38 Dec 3 2018 aarch64 GNU/Linux
+
+Running    : 19.1.555.13
+Nonrunning : 19.1.555.12
+{noformat}
+
+*Environment (GC,TL1,CMS,CLI,WEB,SNMP,XML,FTA,etc.):*
+{noformat}
+CLI
+{noformat}
+
+*Summary:*
+{noformat}
+Three Way Calling - Busy with flash-hook by Endpoint
+{noformat}
+
+*PRE-CONFIGURATION:*
+{noformat}
+
+Last login: Fri Feb 15 10:48:18 2019 from 192.168.9.55
+root@DAITAN:~# cli
+DAITAN# config
+DAITAN(config)# ont paulo serial-number 478C4D profile-id GH3200X
+DAITAN(config-ont-paulo)# top
+DAITAN(config)# interface ont-ua paulo/1
+DAITAN(config-ont-ua-paulo/1)# sip-profile meta_pet
+DAITAN(config-ont-ua-paulo/1)# vlan 1020
+DAITAN(config-vlan-1020)# ip address 0.0.0.0/24
+DAITAN(config-vlan-1020)# ip gateway 10.230.20.1
+DAITAN(config-vlan-1020)# policy-map camilavoice
+DAITAN(config-policy-map-camilavoice)# top
+DAITAN(config)# interface pots paulo/p1
+DAITAN(config-pots-paulo/p1)# sip-service 1
+Value for 'uri' (<string>): 2012048933
+Value for 'user' (<string>): 2012048933
+Value for 'password' (<string>): daitan123
+DAITAN(config-sip-service-1)# dial-plan system-default
+DAITAN(config-sip-service-1)# three-way-calling
+DAITAN(config-sip-service-1)# top
+DAITAN(config)# 
+DAITAN(config)# 
+DAITAN(config)# interface pots paulo/p2
+DAITAN(config-pots-paulo/p2)# sip-service 1
+Value for 'uri' (<string>): 2012048934
+Value for 'user' (<string>): 2012048934
+Value for 'password' (<string>): daitan123
+DAITAN(config-sip-service-1)# dial-plan system-default
+DAITAN(config-sip-service-1)# top
+DAITAN(config)# exit
+
+DAITAN# show interface pots paulo/p1 sip-service status
+sip-service status
+ sip-profile           meta_pet
+ ont-ua                1
+ uri                   2012048933
+ user                  2012048933
+ password              daitan123
+ service-status        configuration-done
+ hook-status           onhook
+ mac-address           cc-be-59-51-db-d6
+ ip-address            0.0.0.0/0
+ gateway               0.0.0.0
+ call-waiting          true
+ caller-id             true
+ three-way-calling     true
+ msg-waiting-indicator true
+ t38-fax-relay         false
+ dial-plan             system-default
+ shutdown              false
+ oper-state            up
+
+SHOW ONT
+ 
+#> telnet 10.10.200.216 2003
+~ # dcli potsmgr show sip_service
+potsmgr>show sip_service
+
+POTS Port:                     1
+Profile:                       SIP_PROFILE_1
+Username:                      2012048933
+Password:                      daitan123
+URI:                           2012048933
+Domain:                        <not-set>
+SIP AOR:                       <not-set>
+Realm:                         <not-set>
+Call Waiting:                  enabled
+Call Transfer:                 enabled
+Call Hold:                     enabled
+Obsolete Hold:                 disabled
+Forced Hold:                   enabled
+Home Intercom:                 enabled
+Caller ID:                     enabled
+3-way Calling:                 enabled
+
+POTS Port:                     2
+Profile:                       SIP_PROFILE_2
+Username:                      2012048934
+Password:                      daitan123
+URI:                           2012048934
+Domain:                        <not-set>
+SIP AOR:                       <not-set>
+Realm:                         <not-set>
+Call Waiting:                  enabled
+Call Transfer:                 enabled
+Call Hold:                     enabled
+Obsolete Hold:                 disabled
+Forced Hold:                   enabled
+Home Intercom:                 enabled
+Caller ID:                     enabled
+3-way Calling:                 enabled
+
+{noformat}
+
+*STEPS:*
+{noformat}
+
+1 - Created SIP line for phone A (2012048934), phone B (2012048933) and phone C (2012048932)
+2 - Enabled 3-way-calling on ONT for phone A
+3 - On switch the flash-hook call service must be kept "Endpoint" (default)
+4 - Initiated a call from phone A to phone B and it was established
+5 - Took phone C off-hook
+6 - Flashed phone A
+7 - Dialed from phone A to phone C
+	- Heard a busy tone on phone A
+
+Notes:
+
+	Flashed phone A again
+	- Verified that phone A and phone B were reconnected and a busy tone was heard on both phones A and B
+	Flashed phone A again
+	- Verified that phone A and phone B remained connected and the busy tone was dropped
+
+{noformat}

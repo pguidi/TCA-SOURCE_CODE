@@ -1,0 +1,8 @@
+GH3200X)ONT*
+cli;
+telnet 10.10.200.216;
+root;dbps;
+kill 3;
+telnet 10.10.200.216 2003;
+dcli potsmgr show sip_service
+*ONT

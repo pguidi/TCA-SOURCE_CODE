@@ -1,0 +1,66 @@
+<<BEGIN_DUT>>
+
+META)SWITCH*
+*SWITCH
+
+MILAN)OLT*
+cli;show version;
+config;
+no ont paulo;
+ont paulo serial-number 478C4D profile-id GH3200X;
+top;
+sip-profile broad_X;
+proxy-server 1.2.3.4;
+no proxy-server-secondary;
+registration-period 60;
+rtp-codec first-order G729;
+rtp-codec second-order uLaw;
+rtp-codec third-order aLaw;
+top;
+interface ont-ua paulo/1;
+sip-profile broad_X;
+no policy-map camilavoice;
+top;
+exit;
+session notification set-category ALL;
+show interface pots paulo/p* sip-service status
+*OLT
+
+
+GH3200X)ONT*
+cli;
+telnet 10.10.200.216;
+root;dbps;
+kill 3;
+telnet 10.10.200.216 2003;
+dcli potsmgr show sip_service
+*ONT
+
+<<END_DUT>>
+
+
+
+
+<<BEGIN_AUX>>
+
+META)SWITCH*
+*SWITCH
+
+
+E7 117)OLT*
+"E7>Shelf1>Card2>GPON3>ONT6"
+Configure Service Tag with "@Untagged_1020"
+Host Protocol with "dhcp"
+Create SIP service with user name and URI "20120432"
+Password "daitan123"
+SIP profile "@Meta_Pet_IP"
+Dial plan "system-default"
+*OLT
+
+
+844G-1)ONT*
+<<END_AUX>>
+
+	
+<<BEGIN_STEPS>>
+<<END_STEPS>>
